@@ -1,24 +1,26 @@
 async function lookUpIP() {
-  const ip = document.getElementById("ipInput").value.trim();
-  if (!ip) {
-    document.getElementById("output").textContent = "Introduce una IP válida.";
-    return;
-  }
-  
-  document.getElementById("output").textContent = "Buscando...";
-  
-  try {
-    // Llamada a una API que permite CORS
-    const response = await fetch(`https://ipwho.is/${ip}`);
-    const data = await response.json();
+    const ip = document.getElementById("ipInput").value.trim();
+    const output = document.getElementById("output");
 
-    if (!data.success) {
-      document.getElementById("output").textContent = "IP no encontrada o inválida.";
-      return;
+    if (!ip) {
+        output.textContent = "Introduce una IP válida.";
+        return;
     }
 
-    // Mostramos muchos datos
-    const resultText = `
+    output.textContent = "Buscando datos de la IP...";
+
+    try {
+        // Llamada a API pública compatible con CORS
+        const res = await fetch(`https://ipwho.is/${ip}`);
+        const data = await res.json();
+
+        if (!data.success) {
+            output.textContent = "IP no válida o no encontrada.";
+            return;
+        }
+
+        // Mostrar muchos datos
+        output.textContent = `
 IP:                 ${data.ip}
 País:               ${data.country}
 Región:             ${data.region}
@@ -31,13 +33,10 @@ Moneda:             ${data.currency.code}
 Idioma:             ${data.language}
 ASN:                ${data.connection.asn}
 Tipo de Conexión:   ${data.connection.type}
-DOMINIO:            ${data.connection.domain}
-`;
-
-    document.getElementById("output").textContent = resultText;
-
-  } catch (err) {
-    document.getElementById("output").textContent = "Error al consultar la API.";
-    console.error(err);
-  }
+Dominio:            ${data.connection.domain}
+        `;
+    } catch (err) {
+        output.textContent = "Error al consultar la API.";
+        console.error(err);
+    }
 }
