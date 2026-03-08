@@ -1,0 +1,67 @@
+body{
+margin:0;
+background:black;
+color:#00ff41;
+font-family:monospace;
+}
+
+#matrix{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+#header{
+text-align:center;
+padding:20px;
+}
+
+input{
+background:black;
+border:1px solid #00ff41;
+color:#00ff41;
+padding:10px;
+}
+
+button{
+background:black;
+border:1px solid #00ff41;
+color:#00ff41;
+padding:10px;
+cursor:pointer;
+}
+
+#terminal{
+width:90%;
+margin:auto;
+border:1px solid #00ff41;
+padding:10px;
+height:180px;
+overflow:auto;
+white-space:pre-wrap;
+}
+
+#dashboard{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+width:90%;
+margin:auto;
+margin-top:10px;
+}
+
+.module{
+border:1px solid #00ff41;
+padding:10px;
+}
+
+#map{
+height:400px;
+width:90%;
+margin:auto;
+margin-top:10px;
+border:1px solid #00ff41;
+}
