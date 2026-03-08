@@ -1,67 +1,58 @@
 body{
-margin:0;
-background:black;
-color:#00ff41;
-font-family:monospace;
+    background:#000;
+    color:#00ff9f;
+    font-family:monospace;
+    margin:0;
 }
 
-#matrix{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:-1;
+h1{
+    text-align:center;
+    padding:20px;
+    color:#00ff9f;
+    text-shadow: 0 0 5px #00ff9f;
 }
 
-#header{
-text-align:center;
-padding:20px;
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:15px;
+    padding:15px;
 }
 
-input{
-background:black;
-border:1px solid #00ff41;
-color:#00ff41;
-padding:10px;
+.panel{
+    background:#0a0a0a;
+    border:1px solid #00ff9f;
+    padding:10px;
+    border-radius:8px;
+    box-shadow: 0 0 10px #00ff9f;
 }
 
-button{
-background:black;
-border:1px solid #00ff41;
-color:#00ff41;
-padding:10px;
-cursor:pointer;
+.full{
+    grid-column:span 3;
+}
+
+canvas{
+    width:100%;
+    height:250px;
+}
+
+#map,#graph{
+    height:250px;
 }
 
 #terminal{
-width:90%;
-margin:auto;
-border:1px solid #00ff41;
-padding:10px;
-height:180px;
-overflow:auto;
-white-space:pre-wrap;
+    background:black;
+    height:200px;
+    overflow:auto;
+    border:1px solid #00ff9f;
+    padding:10px;
 }
 
-#dashboard{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-width:90%;
-margin:auto;
-margin-top:10px;
-}
-
-.module{
-border:1px solid #00ff41;
-padding:10px;
-}
-
-#map{
-height:400px;
-width:90%;
-margin:auto;
-margin-top:10px;
-border:1px solid #00ff41;
+#cmd{
+    width:100%;
+    background:black;
+    color:#00ff9f;
+    border:none;
+    padding:10px;
+    outline:none;
 }
