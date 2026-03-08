@@ -1,37 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>THESIXCLOWN LEAKS</title>
-<link rel="stylesheet" href="style.css"/>
+<title>Cyber Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- Librerías -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
+<h1>CYBERPUNK DASHBOARD</h1>
 
-<div id="header">
-<h1>THESIXCLOWN LEAKS</h1>
-<p>OSINT DASHBOARD • NETWORK INTELLIGENCE</p>
-<input id="ip" placeholder="Enter IP">
-<button onclick="scan()">SCAN</button>
+<div class="grid">
+
+<div class="panel">
+<h2>🌍 Globe</h2>
+<canvas id="globe"></canvas>
 </div>
 
-<div id="terminal"></div>
-
-<div id="dashboard">
-<div class="module" id="ipinfo"></div>
-<div class="module" id="network"></div>
-<div class="module" id="location"></div>
-<div class="module" id="security"></div>
-<div class="module" id="dns"></div>
-<div class="module" id="system"></div>
-</div>
-
+<div class="panel">
+<h2>🛰 IP Map</h2>
 <div id="map"></div>
+</div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div class="panel">
+<h2>📊 IP Data</h2>
+<pre id="data"></pre>
+</div>
+
+<div class="panel">
+<h2>🧠 Network Graph</h2>
+<div id="graph"></div>
+</div>
+
+<div class="panel">
+<h2>📡 Traceroute</h2>
+<pre id="trace"></pre>
+</div>
+
+<div class="panel">
+<h2>📈 Traffic</h2>
+<canvas id="chart"></canvas>
+</div>
+
+<div class="panel full">
+<h2>🖥 Terminal</h2>
+<div id="terminal"></div>
+<input id="cmd">
+</div>
+
+</div>
+
 <script src="script.js"></script>
-
 </body>
 </html>
