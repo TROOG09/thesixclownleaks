@@ -1,83 +1,108 @@
-/* MATRIX RAIN */
-let canvas=document.getElementById("matrix");
-let ctx=canvas.getContext("2d");
-canvas.height=window.innerHeight;
-canvas.width=window.innerWidth;
-let letters="01ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-let fontSize=14;
-let columns=canvas.width/fontSize;
-let drops=[];for(let x=0;x<columns;x++) drops[x]=1;
-function draw(){
-ctx.fillStyle="rgba(0,0,0,0.05)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle="#00ff41";
-ctx.font=fontSize+"px monospace";
-for(let i=0;i<drops.length;i++){
-let text=letters[Math.floor(Math.random()*letters.length)];
-ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975) drops[i]=0;
-drops[i]++;
-}}
-setInterval(draw,33);
+// ------------------- 🌍 THREE JS GLOBE -------------------
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75,1,0.1,1000);
+const renderer = new THREE.WebGLRenderer({canvas:document.getElementById("globe")});
+renderer.setSize(300,300);
 
-/* TERMINAL */
-function log(text){
-let term=document.getElementById("terminal");
-term.innerHTML+="> "+text+"\n";
-term.scrollTop=term.scrollHeight;
+// Textura de la Tierra
+const loader = new THREE.TextureLoader();
+const geometry = new THREE.SphereGeometry(5,32,32);
+const material = new THREE.MeshBasicMaterial({
+    map: loader.load("https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg")
+});
+const earth = new THREE.Mesh(geometry,material);
+scene.add(earth);
+
+camera.position.z = 10;
+
+function animateGlobe(){
+    requestAnimationFrame(animateGlobe);
+    earth.rotation.y += 0.002;
+    renderer.render(scene,camera);
 }
+animateGlobe();
 
-/* MAP */
-var map=L.map('map').setView([20,0],2);
+// ------------------- 🛰 LEAFLET MAP -------------------
+const map = L.map('map').setView([20,0],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-var marker;
 
-/* ROUTE VISUALIZER */
-function drawRoute(lat,lon){
-let route=[[40.4168,-3.7038],[48.8566,2.3522],[50.1109,8.6821],[lat,lon]];
-for(let i=0;i<route.length-1;i++){
-L.polyline([route[i],route[i+1]],{color:"#00ff41"}).addTo(map);}
+// IP simuladas
+const ips = ["8.8.8.8","1.1.1.1","208.67.222.222"];
+ips.forEach(ip=>{
+    fetch("https://ipapi.co/"+ip+"/json/")
+    .then(r=>r.json())
+    .then(d=>{
+        L.marker([d.latitude,d.longitude])
+        .addTo(map)
+        .bindPopup(ip);
+    })
+});
+
+// ------------------- 📊 IP DATA -------------------
+async function loadData(){
+    let ipapi = await fetch("https://ipapi.co/json/").then(r=>r.json());
+    let ipwho = await fetch("https://ipwho.is/").then(r=>r.json());
+
+    let info = "";
+    for(let k in ipapi) info += k+" : "+ipapi[k]+"\n";
+    for(let k in ipwho) info += k+" : "+ipwho[k]+"\n";
+    document.getElementById("data").textContent = info;
 }
+loadData();
 
-/* SCAN */
-async function scan(){
-let ip=document.getElementById("ip").value;
-document.getElementById("terminal").innerHTML="";
-log("initializing OSINT scan...");
-log("collecting network intelligence...");
-log("querying geolocation database...");
+// ------------------- 🧠 NETWORK GRAPH -------------------
+var nodes = new vis.DataSet([
+    {id:1,label:"User"},
+    {id:2,label:"Router"},
+    {id:3,label:"ISP"},
+    {id:4,label:"Internet"},
+    {id:5,label:"Server"},
+    {id:6,label:"API"},
+    {id:7,label:"Database"}
+]);
+var edges = new vis.DataSet([
+    {from:1,to:2},{from:2,to:3},{from:3,to:4},{from:4,to:5},{from:5,to:6},{from:6,to:7}
+]);
+new vis.Network(document.getElementById("graph"),{nodes,edges},{nodes:{color:"#00ff9f"},edges:{color:"#00ff9f"},physics:{stabilization:false}});
 
-let res=await fetch("http://ip-api.com/json/"+ip);
-let data=await res.json();
+// ------------------- 📡 TRACEROUTE SIMULADO -------------------
+const hops = ["192.168.1.1","10.0.0.1","ISP Gateway","IXP","Server"];
+let trace="";
+hops.forEach((h,i)=>{trace += (i+1)+"  "+h+"\n";});
+document.getElementById("trace").textContent = trace;
 
-log("ip detected: "+data.query);
-log("isp: "+data.isp);
-log("asn: "+data.as);
+// ------------------- 📈 TRAFFIC CHART -------------------
+new Chart(document.getElementById("chart"),{
+    type:"line",
+    data:{
+        labels:["1","2","3","4","5","6","7"],
+        datasets:[{
+            label:"Traffic",
+            data:[Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100],
+            borderColor:"#00ff9f"
+        }]
+    }
+});
 
-document.getElementById("ipinfo").innerHTML=`
-<h3>IP INFO</h3>
-IP: ${data.query}<br>ASN: ${data.as}<br>Org: ${data.org}`;
-document.getElementById("network").innerHTML=`
-<h3>NETWORK</h3>
-ISP: ${data.isp}<br>Timezone: ${data.timezone}`;
-document.getElementById("location").innerHTML=`
-<h3>LOCATION</h3>
-Country: ${data.country}<br>City: ${data.city}<br>Lat: ${data.lat}<br>Lon: ${data.lon}`;
-document.getElementById("security").innerHTML=`
-<h3>SECURITY</h3>
-Proxy: ${data.proxy}<br>Hosting: ${data.hosting}<br>Mobile: ${data.mobile}`;
-document.getElementById("dns").innerHTML=`
-<h3>DNS</h3>Reverse DNS: ${data.reverse || "Unknown"}`;
-document.getElementById("system").innerHTML=`
-<h3>SYSTEM</h3>Region: ${data.regionName}<br>ZIP: ${data.zip}`;
-
-if(marker) map.removeLayer(marker);
-marker=L.marker([data.lat,data.lon]).addTo(map);
-map.setView([data.lat,data.lon],5);
-drawRoute(data.lat,data.lon);
-
-log("mapping route nodes...");
-log("analysis complete.");
-log("Gracias por usar thesixclown leaks.");
-log("Ahora eres parte de thesixclown.");
-}
+// ------------------- 🖥 TERMINAL -------------------
+const term = document.getElementById("terminal");
+const cmd = document.getElementById("cmd");
+function print(t){term.innerHTML += t+"<br>"; term.scrollTop = term.scrollHeight;}
+const commands = ["help","ip","trace","graph","map","globe","traffic","ports","status","connections","alerts","scan","dashboard","simulate","logs","update","ping","top","clear","exit"];
+cmd.addEventListener("keydown",e=>{
+    if(e.key==="Enter"){
+        let c = cmd.value.trim();
+        print("> "+c);
+        if(c==="help") print("Commands: "+commands.join(", "));
+        else if(c==="ip") print(document.getElementById("data").textContent);
+        else if(c==="trace") print(document.getElementById("trace").textContent);
+        else if(c==="graph") print("Network graph visualized above.");
+        else if(c==="map") print("IP map displayed above.");
+        else if(c==="globe") print("Globe spinning above.");
+        else if(c==="traffic") print("Traffic chart shown above.");
+        else if(c==="ports") print("Simulated ports: 22 OPEN, 80 OPEN, 443 CLOSED...");
+        else if(c==="clear") term.innerHTML="";
+        else print("Command not found.");
+        cmd.value="";
+    }
+});
